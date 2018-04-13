@@ -65,6 +65,10 @@ int main(void)
     // How many command line args the user typed
     int args_count;
 
+    int is_background_task;
+
+    FILE *file = NULL;
+
     // Shell loops forever (until we tell it to exit)
     while (1) {
         // Print a prompt
@@ -101,17 +105,39 @@ int main(void)
             else perror("cd failed");
         }
 
+        // Check for & symbol to determine if the task should be ran in the background
+        if (strcmp(args[args_count - 1], "&") == 0)
+        {
+            args[args_count - 1] = NULL;
+            is_background_task = 1;
+        }
+
+        // Redirect output to a file
+        if (args[args_count - 2] != NULL && strcmp(args[args_count - 2], ">") == 0)
+        {
+            if (fork() == 0)
+            {
+                file = freopen(args[args_count - 1], "a+", stdout);
+            }
+
+            args[args_count - 2] = NULL;
+            args[args_count - 1] = NULL;
+        }
+
         // Execute the desired command in a fork
         // Wait for the fork to complete before continuing the main loop
-        int f = fork();
-        if (f == 0)
+        if (fork() == 0)
         {
             execvp(args[0], &args[0]);
             break;
         }
         else
         {
-            wait(NULL);
+            if (!is_background_task) wait(NULL);
+
+            // reset stdout from file redirection
+            freopen("/dev/tty", "w", stdout);
+            if (file != NULL) fclose(file);
         }
 
         #if DEBUG
