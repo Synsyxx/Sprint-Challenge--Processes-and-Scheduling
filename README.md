@@ -6,13 +6,21 @@ Add your answers inline, below, with your pull request.
 
 1. List all of the main states a process may be in at any point in time on a
    standard Unix system. Briefly explain what each of these states mean.
+   * Created
+   * Waiting - Swapped out and waiting
+   * Running
+   * Blocked - Swapped out and blocked
+   * Terminated
 
 2. What is a Zombie Process? How does it get created? How does it get destroyed?
+    * It's a process that's completed execution but is still listed in the process table.
 
 3. Describe the job of the Scheduler in the OS in general.
+    * To allocate resources to multiple tasks through prioritized job queues.
 
 4. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
-
+    * Round robin essentially just gives all processes an equal amount of time, going from one process to the next until the process finishes execution or the time is up. This balances out the response time, but throughput loses out. MLFQ has a set of rules to prioritize processes by how new they are, how long they take and how important they are to be completed.
+    
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
 Important Safety Tip: Resist the urge to start coding until you:
